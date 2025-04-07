@@ -16,9 +16,10 @@ jobs:
         with:
           dotnet-version: 9
           cache: true
-      - run: curl -sSL https://ftp.lunarware.tech/randomrefs/refs.tar.gz | tar xvzf NineFourteenTeleport/
-      - run: dotnet restore NineFourteenTeleport/NineFourteenTeleport.csproj
-      - run: dotnet build NineFourteenTeleport/NineFourteenTeleport.csproj
+      - run: curl -sSL https://ftp.lunarware.tech/randomrefs/refs.tar.gz | tar xvzf -
+      - run: mv refs/ NineFourteenTeleport/refs
+      - run: dotnet restore --locked-mode
+      - run: dotnet build 
       - uses: actions/upload-artifact@v4.5.0
         with:
           path: NineFourteenTeleport/bin/Debug/net48/NineFourteenTeleport.dll
