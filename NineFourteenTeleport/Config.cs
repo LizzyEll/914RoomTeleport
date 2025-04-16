@@ -30,7 +30,7 @@ namespace NineFourteenTeleport;
             new ()
             {
                 [Scp914KnobSetting.Coarse] = new Scp914Teleport() { 
-                    Chance = 0,
+                    Chance = 100,
                     Effects = [
                         new GiveEffect() { Effect = EffectType.Poisoned, Intensity = 2, Duration = 10 }
                     ]

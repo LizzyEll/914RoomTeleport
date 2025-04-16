@@ -19,32 +19,34 @@ public class EventHandlers {
     }
     public void OnUpgradePlayer(UpgradingPlayerEventArgs ev)
     {
+        /* Make sure the plugin is still enabled */
         if (NineFourteenTeleport.Instance == null) return;
         if (!NineFourteenTeleport.Instance.Config.IsEnabled) return;
+        
+        /* Check if the 914 Knob Setting is enabled in the config */
         if (!NineFourteenTeleport.Instance.Config.Scp914Mode.Keys.Contains(ev.KnobSetting)) return;
 
+        /* Get a random room for the player to teleport into */
         var roomIndex = _rnd.Next(0, NineFourteenTeleport.Instance.Config.TeleportRooms.Count());
         var roomType = NineFourteenTeleport.Instance.Config.TeleportRooms[roomIndex];
         var randomRoom = Room.Get(roomType);
 
         var config = NineFourteenTeleport.Instance.Config.Scp914Mode[ev.KnobSetting]!;
-
         var randomNum = _rnd.NextDouble();
-        Log.Info($"Number: {randomNum} <= Chance: {config.Chance / 100d}");
+
+        /* Did the teleport succeed? */
+        var success = randomNum <= config.Chance / 100d;
         
-        if (randomNum <= config.Chance / 100d) {
-            Log.Info("Teleport Success!");
-            
-            Timing.CallDelayed(0.1f, () => {
+        if (!success && !NineFourteenTeleport.Instance.Config.TeleportBackfire) return;
+        if (success)
+        {
+            Timing.CallDelayed(0.1f, () =>
+            {
+                /* Teleport the player */
                 ev.Player.Position = randomRoom.Position + Vector3.up * 2;
-                ApplyEffects(ev.Player, config.Effects);
             });
         }
-        else
-        {
-            if (!NineFourteenTeleport.Instance.Config.TeleportBackfire) return;
-            ApplyEffects(ev.Player, config.Effects);
-        }
-        Log.Info($"Teleporting on {ev.KnobSetting}: {ev.Player.Nickname}");
+
+        ApplyEffects(ev.Player, config.Effects);
     }
 }
